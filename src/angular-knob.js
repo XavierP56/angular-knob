@@ -1,14 +1,13 @@
 angular.module('ui.knob', [])
-  .directive('knob', function () {
+  .directive('knob', function ($parse) {
     return {
       restrict: 'EACM',
       template: function(elem, attrs){
-
-        return '<input value="{{ knob }}">';
-
+        return '<input value="0"></input>';
       },
       replace: true,
       scope: true,
+
       link: function (scope, elem, attrs) {
 
         scope.knob = scope.$eval(attrs.knobData);
@@ -34,8 +33,17 @@ angular.module('ui.knob', [])
           $elem = $(elem);
           $elem.val(scope.knob);
           $elem.change();
-          $elem.knob(opts);
+          update = {
+                change: function (value) {
+                    scope.$apply(function(){
+                      $parse(attrs.knobData).assign(scope.$parent,value);
+                      $parse(attrs.knobChanged)(scope.$parent)
+                   });
+                }
+          };
 
+          options = jQuery.extend(opts, update)
+          $elem.knob(options);
         };
 
         scope.$watch(attrs.knobData, function () {
@@ -45,7 +53,6 @@ angular.module('ui.knob', [])
         scope.$watch(attrs.knobOptions, function () {
           renderKnob();
         }, true);
-
       }
     };
   });
