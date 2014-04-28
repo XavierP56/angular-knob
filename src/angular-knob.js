@@ -19,6 +19,8 @@ angular.module('ui.knob', [])
           var opts = {}; 
           if(!angular.isUndefined(attrs.knobOptions)){
             opts = scope.$eval(attrs.knobOptions);
+            $elem = $(elem);
+            $elem.trigger('configure', opts);
           }
 
           if(!angular.isUndefined(attrs.knobMax)){
@@ -42,8 +44,7 @@ angular.module('ui.knob', [])
                 }
           };
 
-          options = jQuery.extend(opts, update)
-          $elem.knob(options);
+          $elem.knob(update);
         };
 
         scope.$watch(attrs.knobData, function () {
